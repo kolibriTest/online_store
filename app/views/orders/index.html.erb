@@ -1,0 +1,12 @@
+<h1>Оформлення замовлення</h1>
+
+<%= form_with model: @order, local: true do |form| %>
+  <div>
+    <%= form.label :address, 'Адреса доставки' %>
+    <%= form.text_field :address %>
+  </div>
+
+  <div>
+    <%= form.submit 'Підтвердити замовлення' %>
+  </div>
+<% end %>

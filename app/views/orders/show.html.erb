@@ -1,0 +1,10 @@
+<h1>Замовлення №<%= @order.id %></h1>
+
+<p>Адреса доставки: <%= @order.address %></p>
+
+<h3>Товари в замовленні:</h3>
+<ul>
+  <% @order.cart_items.each do |item| %>
+    <li><%= item.product.name %> - <%= item.quantity %> шт.</li>
+  <% end %>
+</ul>

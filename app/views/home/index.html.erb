@@ -1,0 +1,36 @@
+<div class="container">
+  <header class="my-4">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <ul class="navbar-nav">
+        <li class="nav-item"><%= link_to "Головна", root_path, class: "nav-link" %></li>
+        <li class="nav-item"><%= link_to "Товари", products_path, class: "nav-link" %></li>
+        <li class="nav-item"><%= link_to "Кошик", cart_items_path, class: "nav-link" %></li>
+        <li class="nav-item"><%= link_to "Замовлення", orders_path, class: "nav-link" %></li>
+      </ul>
+    </nav>
+  </header>
+
+  <h1 class="text-center">Ласкаво просимо до інтернет-магазину ліків</h1>
+
+  <section class="my-4">
+    <h2>Каталог товарів</h2>
+    <%= link_to 'Переглянути каталог', products_path, class: 'btn btn-primary' %>
+  </section>
+
+  <section class="my-4">
+    <h2>Популярні товари</h2>
+    <div class="row">
+      <% @products.each do |product| %>
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-body">
+              <p class="card-title"><%= product.name %></p>
+              <p><%= product.price %> грн</p>
+              <%= link_to 'Деталі', product_path(product), class: 'btn btn-link' %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </section>
+</div>

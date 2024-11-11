@@ -1,0 +1,8 @@
+<h1>Деталі платежу</h1>
+<p><strong>Тип:</strong> <%= @payment.payment_type %></p>
+<p><strong>Сума:</strong> <%= @payment.amount %></p>
+<p><strong>Дата:</strong> <%= @payment.date %></p>
+<p><strong>Статус:</strong> <%= @payment.status %></p>
+
+<%= link_to 'Редагувати', edit_payment_path(@payment), class: "btn btn-warning" %>
+<%= link_to 'Назад до списку', payments_path, class: "btn btn-secondary" %>
