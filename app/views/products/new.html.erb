@@ -1,0 +1,58 @@
+<!-- app/views/products/new.html.erb -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Додати новий товар</title>
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  </head>
+  <body>
+    <header class="my-4">
+      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <ul class="navbar-nav">
+          <li class="nav-item"><%= link_to "Головна", root_path, class: "nav-link" %></li>
+          <li class="nav-item"><%= link_to "Товари", products_path, class: "nav-link" %></li>
+          <li class="nav-item"><%= link_to "Кошик", cart_items_path, class: "nav-link" %></li>
+          <li class="nav-item"><%= link_to "Замовлення", orders_path, class: "nav-link" %></li>
+        </ul>
+      </nav>
+    </header>
+
+    <h1 class="text-center">Додати новий товар</h1>
+
+    <div class="container">
+      <%= form_with(model: @product, local: true) do |form| %>
+        <% if @product.errors.any? %>
+          <div id="error_explanation" class="alert alert-danger">
+            <h4><%= pluralize(@product.errors.count, "error") %> заважають зберегти товар:</h4>
+            <ul>
+              <% @product.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <div class="mb-3">
+          <%= form.label :name, 'Назва товару' %>
+          <%= form.text_field :name, class: 'form-control' %>
+        </div>
+
+        <div class="mb-3">
+          <%= form.label :price, 'Ціна' %>
+          <%= form.number_field :price, class: 'form-control' %>
+        </div>
+
+        <div class="mb-3">
+          <%= form.label :details, 'Опис товару' %>
+          <%= form.text_area :details, class: 'form-control' %>
+        </div>
+
+        <div class="mb-3">
+          <%= form.submit 'Додати товар', class: 'btn btn-success' %>
+        </div>
+      <% end %>
+    </div>
+  </body>
+</html>

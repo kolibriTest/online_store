@@ -1,6 +1,11 @@
 Rails.application.routes.draw do
-  root 'home#index'  # Головна сторінка
-  resources :products  # Ресурси для товарів
-  resources :cart_items  # Ресурси для кошика
-  resources :orders  # Ресурси для замовлень
+  root 'home#index'
+
+  # Основні ресурси для товарів
+  resources :products
+
+  get 'manage_products', to: 'products#manage'
+
+  resources :cart_items, only: [:create, :index]
+  resources :orders
 end

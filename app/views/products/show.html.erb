@@ -1,0 +1,9 @@
+<!-- app/views/products/show.html.erb -->
+<h1><%= @product.name %></h1>
+<p><%= @product.details %></p>
+<p><%= @product.price %> грн</p>
+
+<%= link_to 'Назад до списку товарів', products_path, class: 'btn btn-secondary' %>
+
+<!-- Кнопка для видалення товару -->
+<%= link_to 'Видалити', product_path(@product), method: :delete, data: { confirm: 'Ви впевнені, що хочете видалити цей товар?' }, class: 'btn btn-danger' %>

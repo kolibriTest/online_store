@@ -1,0 +1,28 @@
+<!-- app/views/products/manage.html.erb -->
+<h1>Управління товарами</h1>
+
+<%= link_to 'Назад на головну', root_path, class: 'btn btn-secondary' %>
+
+<%= turbo_frame_tag "products-list" do %>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Назва</th>
+        <th>Ціна</th>
+        <th>Дії</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @products.each do |product| %>
+        <tr id="product_<%= product.id %>">
+          <td><%= product.name %></td>
+          <td><%= product.price %> грн</td>
+          <td>
+            <%= link_to 'Редагувати', edit_product_path(product), class: 'btn btn-primary' %>
+            <%= link_to 'Видалити', product_path(product), method: :delete, data: { turbo_action: "replace", turbo_frame: "products-list", confirm: 'Ви впевнені?' }, class: 'btn btn-danger' %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
