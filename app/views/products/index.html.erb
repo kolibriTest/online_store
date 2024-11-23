@@ -7,47 +7,54 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet">
   </head>
   <body>
-    <header class="my-4">
-      <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <ul class="navbar-nav">
-          <li class="nav-item"><%= link_to "Головна", root_path, class: "nav-link" %></li>
-          <li class="nav-item"><%= link_to "Товари", products_path, class: "nav-link" %></li>
-          <li class="nav-item"><%= link_to "Кошик", cart_items_path, class: "nav-link" %></li>
-          <li class="nav-item"><%= link_to "Замовлення", orders_path, class: "nav-link" %></li>
-        </ul>
+    <header class="mb-4">
+      <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+        <div class="container">
+          <a class="navbar-brand" href="#"><strong>Магазин ліків</strong></a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Переключити навігацію">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+              <li class="nav-item"><%= link_to "Головна", root_path, class: "nav-link" %></li>
+              <li class="nav-item"><%= link_to "Кошик", cart_items_path, class: "nav-link" %></li>
+              <li class="nav-item"><%= link_to "Управління товарами", manage_products_path, class: "nav-link" %></li> <!-- Кнопка для управління товарами -->
+            </ul>
+          </div>
+        </div>
       </nav>
     </header>
 
-    <h1 class="text-center">Каталог товарів</h1>
-
-    <div class="container">
-      <div class="row">
+    <main class="container">
+      <!-- Каталог товарів -->
+      <h1 class="text-center mb-5 text-primary">Каталог товарів</h1>
+      <div class="row g-4">
         <% @products.each do |product| %>
-          <div class="col-md-4 mb-4">
-            <div class="card">
-              <div class="card-body">
-                <h5 class="card-title"><%= product.name %></h5>
-                <p class="card-text"><%= product.price %> грн</p>
-                <p><%= product.details %></p>
+          <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+              <div class="card-body d-flex flex-column justify-content-between">
+                <h5 class="card-title text-primary"><%= product.name %></h5>
+                <p class="card-text"><strong>Ціна:</strong> <%= product.price %> грн</p>
+                <p class="text-muted"><%= product.details %></p>
 
                 <!-- Форма для додавання товару в кошик -->
                 <%= form_with url: cart_items_path, method: :post do |f| %>
-                  <%= f.hidden_field :product_id, value: product.id %> <!-- ID продукту -->
-
-                  <div class="form-group">
-                    <%= f.label :quantity, 'Кількість' %>
-                    <%= f.number_field :quantity, min: 1, max: 9, value: 1, class: 'form-control' %> <!-- Поле для кількості -->
+                  <%= f.hidden_field :product_id, value: product.id %>
+                  <div class="mb-3">
+                    <%= f.label :quantity, 'Кількість', class: "form-label" %>
+                    <%= f.number_field :quantity, min: 1, max: 9, value: 1, class: 'form-control' %>
                   </div>
-
-                  <%= f.submit 'Додати в кошик', class: 'btn btn-success mt-2' %> <!-- Кнопка додавання в кошик -->
+                  <%= f.submit 'Додати в кошик', class: 'btn btn-success' %>
                 <% end %>
 
-                <%= link_to 'Деталі', product_path(product), class: 'btn btn-link' %>
+                <%= link_to 'Деталі', product_path(product), class: 'btn btn-link mt-2' %>
               </div>
             </div>
           </div>
         <% end %>
       </div>
-    </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>

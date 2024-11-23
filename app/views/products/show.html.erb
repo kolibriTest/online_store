@@ -1,9 +1,57 @@
-<!-- app/views/products/show.html.erb -->
-<h1><%= @product.name %></h1>
-<p><%= @product.details %></p>
-<p><%= @product.price %> грн</p>
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= @product.name %> - Деталі товару</title>
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  </head>
+  <body>
+    <header class="mb-4">
+      <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+        <div class="container">
+          <a class="navbar-brand" href="#">Магазин ліків</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Переключити навігацію">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+              <li class="nav-item"><%= link_to "Головна", root_path, class: "nav-link" %></li>
+              <li class="nav-item"><%= link_to "Кошик", cart_items_path, class: "nav-link" %></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
 
-<%= link_to 'Назад до списку товарів', products_path, class: 'btn btn-secondary' %>
+    <main class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-8">
+          <div class="card shadow-sm">
+            <div class="card-body">
+              <h1 class="card-title text-center text-primary"><%= @product.name %></h1>
+              <hr>
+              <p class="card-text"><strong>Опис:</strong> <%= @product.description.presence || "Опис відсутній" %></p>
+              <p class="card-text"><strong>Ціна:</strong> <span class="text-success"><%= @product.price %> грн</span></p>
+              <p class="card-text"><strong>Наявність:</strong>
+                <% if @product.stock.to_i > 0 %>
+                  <span class="text-success"><%= @product.stock %> в наявності</span>
+                <% else %>
+                  <span class="text-danger">Немає в наявності</span>
+                <% end %>
+              </p>
+              <div class="d-flex justify-content-between mt-4">
+                <%= link_to 'Назад до каталогу', products_path, class: 'btn btn-secondary' %>
+                <% if @product.stock.to_i > 0 %>
+                  <%= link_to 'Додати до кошика', add_to_cart_path(@product), class: 'btn btn-success' %>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
 
-<!-- Кнопка для видалення товару -->
-<%= link_to 'Видалити', product_path(@product), method: :delete, data: { confirm: 'Ви впевнені, що хочете видалити цей товар?' }, class: 'btn btn-danger' %>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

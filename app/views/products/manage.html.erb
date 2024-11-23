@@ -1,28 +1,89 @@
-<!-- app/views/products/manage.html.erb -->
-<h1>Управління товарами</h1>
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Управління товарами</title>
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  </head>
+  <body>
+    <header class="mb-4">
+      <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+        <div class="container">
+          <a class="navbar-brand" href="#">Магазин ліків</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Переключити навігацію">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+              <li class="nav-item"><%= link_to "Головна", root_path, class: "nav-link" %></li>
+              <li class="nav-item"><%= link_to "Товари", products_path, class: "nav-link" %></li>
+              <li class="nav-item"><%= link_to "Кошик", cart_items_path, class: "nav-link" %></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
 
-<%= link_to 'Назад на головну', root_path, class: 'btn btn-secondary' %>
+    <main class="container">
+      <h1 class="mb-4 text-center text-primary">Управління товарами</h1>
 
-<%= turbo_frame_tag "products-list" do %>
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Назва</th>
-        <th>Ціна</th>
-        <th>Дії</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @products.each do |product| %>
-        <tr id="product_<%= product.id %>">
-          <td><%= product.name %></td>
-          <td><%= product.price %> грн</td>
-          <td>
-            <%= link_to 'Редагувати', edit_product_path(product), class: 'btn btn-primary' %>
-            <%= link_to 'Видалити', product_path(product), method: :delete, data: { turbo_action: "replace", turbo_frame: "products-list", confirm: 'Ви впевнені?' }, class: 'btn btn-danger' %>
-          </td>
-        </tr>
+      <!-- Кнопка для додавання товару -->
+      <div class="d-flex justify-content-between mb-3">
+        <%= link_to 'Додати новий товар', new_product_path, class: 'btn btn-success' %>
+      </div>
+
+      <%= turbo_frame_tag "products-list" do %>
+        <table class="table table-hover table-bordered product-table">
+          <thead>
+            <tr>
+              <th>Назва</th>
+              <th>Ціна</th>
+              <th>Опис</th>
+              <th>Дії</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @products.each do |product| %>
+              <tr id="product_<%= product.id %>">
+                <td><%= product.name %></td>
+                <td><%= product.price %> грн</td>
+                <td><%= truncate(product.description, length: 100) %></td>
+                <td class="text-center d-flex justify-content-around">
+                  <!-- Кнопка редагування -->
+                  <%= link_to 'Редагувати', edit_product_path(product), class: 'btn btn-warning btn-sm' %>
+
+                  <!-- Кнопка видалення з модальним підтвердженням -->
+                  <%= button_to product_path(product), method: :delete, remote: true, class: 'btn btn-danger btn-sm', data: { bs_toggle: 'modal', bs_target: "#deleteModal_#{product.id}" } do %>
+                    Видалити
+                  <% end %>
+                </td>
+              </tr>
+
+              <!-- Модальне вікно підтвердження видалення -->
+              <div class="modal fade" id="deleteModal_<%= product.id %>" tabindex="-1" aria-labelledby="deleteModalLabel_<%= product.id %>" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="deleteModalLabel_<%= product.id %>">Підтвердження видалення</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      Ви дійсно хочете видалити цей товар: <%= product.name %>?
+                    </div>
+                    <div class="modal-footer">
+                      <%= button_to 'Видалити', product_path(product), method: :delete, remote: true, class: 'btn btn-danger' %>
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрити</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </tbody>
+        </table>
       <% end %>
-    </tbody>
-  </table>
-<% end %>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

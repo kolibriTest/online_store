@@ -1,5 +1,4 @@
-# Pin npm packages by running ./bin/importmap
-
+# config/importmap.rb
 pin "application"
 pin "@hotwired/turbo-rails", to: "https://cdn.skypack.dev/@hotwired/turbo-rails"
 pin "@hotwired/stimulus", to: "stimulus.min.js"

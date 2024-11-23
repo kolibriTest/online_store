@@ -1,4 +1,3 @@
-<!-- app/views/products/new.html.erb -->
 <!DOCTYPE html>
 <html>
   <head>
@@ -8,51 +7,62 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet">
   </head>
   <body>
-    <header class="my-4">
-      <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <ul class="navbar-nav">
-          <li class="nav-item"><%= link_to "Головна", root_path, class: "nav-link" %></li>
-          <li class="nav-item"><%= link_to "Товари", products_path, class: "nav-link" %></li>
-          <li class="nav-item"><%= link_to "Кошик", cart_items_path, class: "nav-link" %></li>
-          <li class="nav-item"><%= link_to "Замовлення", orders_path, class: "nav-link" %></li>
-        </ul>
+    <header class="mb-4">
+      <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+        <div class="container">
+          <a class="navbar-brand" href="#"><strong>Магазин ліків</strong></a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Переключити навігацію">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+              <li class="nav-item"><%= link_to "Головна", root_path, class: "nav-link" %></li>
+              <li class="nav-item"><%= link_to "Кошик", cart_items_path, class: "nav-link" %></li>
+              <li class="nav-item"><%= link_to "Товари", products_path, class: "nav-link" %></li> <!-- Кнопка "Товари" -->
+              <li class="nav-item"><%= link_to "Управління товарами", manage_products_path, class: "nav-link" %></li> <!-- Кнопка для управління товарами -->
+            </ul>
+          </div>
+        </div>
       </nav>
     </header>
 
-    <h1 class="text-center">Додати новий товар</h1>
+    <main class="container">
+      <h1 class="text-center mb-5 text-primary">Додати новий товар</h1>
 
-    <div class="container">
-      <%= form_with(model: @product, local: true) do |form| %>
-        <% if @product.errors.any? %>
-          <div id="error_explanation" class="alert alert-danger">
-            <h4><%= pluralize(@product.errors.count, "error") %> заважають зберегти товар:</h4>
-            <ul>
-              <% @product.errors.full_messages.each do |message| %>
-                <li><%= message %></li>
-              <% end %>
-            </ul>
-          </div>
-        <% end %>
+      <div class="row justify-content-center">
+        <div class="col-md-8">
+          <%= form_with(model: @product, local: true, class: 'card p-4 shadow-sm') do |form| %>
+            <% if @product.errors.any? %>
+              <div id="error_explanation" class="alert alert-danger">
+                <h4><%= pluralize(@product.errors.count, "помилка") %> заважають зберегти товар:</h4>
+                <ul>
+                  <% @product.errors.full_messages.each do |message| %>
+                    <li><%= message %></li>
+                  <% end %>
+                </ul>
+              </div>
+            <% end %>
 
-        <div class="mb-3">
-          <%= form.label :name, 'Назва товару' %>
-          <%= form.text_field :name, class: 'form-control' %>
+            <div class="mb-3">
+              <%= form.label :name, 'Назва товару', class: 'form-label' %>
+              <%= form.text_field :name, class: 'form-control' %>
+            </div>
+
+            <div class="mb-3">
+              <%= form.label :price, 'Ціна', class: 'form-label' %>
+              <%= form.number_field :price, class: 'form-control' %>
+            </div>
+
+            <!-- Видалено блок опису товару -->
+            
+            <div class="text-center">
+              <%= form.submit 'Додати товар', class: 'btn btn-success' %>
+            </div>
+          <% end %>
         </div>
+      </div>
+    </main>
 
-        <div class="mb-3">
-          <%= form.label :price, 'Ціна' %>
-          <%= form.number_field :price, class: 'form-control' %>
-        </div>
-
-        <div class="mb-3">
-          <%= form.label :details, 'Опис товару' %>
-          <%= form.text_area :details, class: 'form-control' %>
-        </div>
-
-        <div class="mb-3">
-          <%= form.submit 'Додати товар', class: 'btn btn-success' %>
-        </div>
-      <% end %>
-    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>

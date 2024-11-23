@@ -1,17 +1,87 @@
-/*
- * This is a manifest file that'll be compiled into application.css, which will include all the files
- * listed below.
- *
- * Any CSS (and SCSS, if configured) file within this directory, lib/assets/stylesheets, or any plugin's
- * vendor/assets/stylesheets directory can be referenced here using a relative path.
- *
- * You're free to add application-wide styles to this file and they'll appear at the bottom of the
- * compiled file so the styles you add here take precedence over styles defined in any other CSS
- * files in this directory. Styles in this file should be added after the last require_* statement.
- * It is generally better to create a new file per style scope.
- *
- *= require_tree .
- *= require_self
- */
+/* app/assets/stylesheets/application.css */
+
 /* Імпортуємо Bootstrap */
 @import "bootstrap";
+
+/* Стилі для кнопок */
+.btn {
+  border-radius: 30px; /* Округлені кути */
+  font-weight: bold; /* Текст жирний */
+  transition: transform 0.2s, background-color 0.3s; /* Плавні анімації */
+  padding: 10px 25px;
+}
+
+.btn-secondary {
+  background-color: #3498db;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #2980b9;
+  transform: scale(1.05); /* Збільшення кнопки при наведенні */
+}
+
+/* Стилі для таблиці */
+.table-hover tbody tr:hover {
+  background-color: #f0f0f0; /* Світле підсвічування рядків */
+}
+
+.table th, .table td {
+  padding: 15px 20px; /* Збільшені відступи для кращого вигляду */
+  text-align: center;
+}
+
+.table-bordered {
+  border: 1px solid #ddd;
+  border-radius: 10px; /* Округлені кути таблиці */
+}
+
+.table thead {
+  background-color: #f1f1f1;
+  font-weight: bold;
+  color: #333;
+}
+
+.table td {
+  color: #666;
+}
+
+/* Стилі для дій */
+.action-btn {
+  border-radius: 25px;
+  padding: 10px 20px;
+  font-size: 16px;
+  transition: transform 0.2s, background-color 0.3s;
+  text-align: center;
+}
+
+.action-btn.btn-warning {
+  background-color: #f39c12;
+  color: white;
+}
+
+.action-btn.btn-warning:hover {
+  background-color: #e67e22;
+  transform: scale(1.05);
+}
+
+.action-btn.btn-danger {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.action-btn.btn-danger:hover {
+  background-color: #c0392b;
+  transform: scale(1.05);
+}
+
+/* Кнопка назад на головну */
+.btn-back {
+  background-color: #2ecc71;
+  color: white;
+  border-radius: 25px;
+}
+
+.btn-back:hover {
+  background-color: #27ae60;
+}

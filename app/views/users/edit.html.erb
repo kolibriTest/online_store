@@ -1,0 +1,53 @@
+<div class="container mt-5">
+  <h2 class="mb-4">Редагувати профіль</h2>
+  
+  <%= form_for @user do |f| %>
+    <div class="card">
+      <div class="card-body">
+        <!-- Name -->
+        <div class="form-group">
+          <%= f.label :name, class: "form-label" %>
+          <%= f.text_field :name, class: "form-control", placeholder: "Ваше ім'я", maxlength: 10 %>
+          <div class="invalid-feedback">
+            <% if @user.errors[:name].any? %>
+              <%= @user.errors[:name].first %>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Username -->
+        <div class="form-group mt-3">
+          <%= f.label :username, class: "form-label" %>
+          <%= f.text_field :username, class: "form-control", placeholder: "Ім'я користувача (лише маленькі літери, цифри та _)", pattern: "[a-z0-9_]{6,}", title: "Username має бути від 6 символів і містити лише малі літери, цифри та _" %>
+          <div class="invalid-feedback">
+            <% if @user.errors[:username].any? %>
+              <%= @user.errors[:username].first %>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Email (не редагується) -->
+        <div class="form-group mt-3">
+          <%= f.label :email, class: "form-label" %>
+          <%= f.email_field :email, class: "form-control", readonly: true %>
+        </div>
+
+        <!-- Password -->
+        <div class="form-group mt-3">
+          <%= f.label :password, class: "form-label" %>
+          <%= f.password_field :password, class: "form-control", placeholder: "Новий пароль (залиште порожнім, якщо не змінюєте)", pattern: "[a-zA-Z0-9]{6,}", title: "Пароль повинен містити лише англійські літери та цифри і бути не менше 6 символів." %>
+        </div>
+
+        <!-- Password Confirmation -->
+        <div class="form-group mt-3">
+          <%= f.label :password_confirmation, class: "form-label" %>
+          <%= f.password_field :password_confirmation, class: "form-control", placeholder: "Підтвердження паролю" %>
+        </div>
+
+        <div class="mt-3">
+          <%= f.submit "Оновити профіль", class: "btn btn-success" %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

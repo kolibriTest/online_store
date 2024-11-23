@@ -1,4 +1,5 @@
 class ProductsController < ApplicationController
+  before_action :authenticate_user! # Перевірка автентифікації
   before_action :set_product, only: %i[show edit update destroy]
 
   # Виведення всіх товарів на сторінку
@@ -19,8 +20,14 @@ class ProductsController < ApplicationController
   def create
     @product = Product.new(product_params)
 
+    # Перевірка на дублювання назви
+    if Product.exists?(name: @product.name)
+      flash.now[:error] = "Товар з такою назвою вже існує!"
+      render :new and return
+    end
+
     if @product.save
-      redirect_to products_path, notice: 'Товар успішно додано.'
+      redirect_to manage_products_path, notice: 'Товар успішно додано.'
     else
       render :new
     end
@@ -28,6 +35,12 @@ class ProductsController < ApplicationController
 
   # Оновлення інформації про товар
   def update
+    # Перевірка на дублювання назви
+    if Product.exists?(name: @product.name) && @product.name != params[:product][:name]
+      flash.now[:error] = "Товар з такою назвою вже існує!"
+      render :edit and return
+    end
+
     if @product.update(product_params)
       redirect_to manage_products_path, notice: 'Товар успішно оновлений.'
     else
@@ -37,15 +50,16 @@ class ProductsController < ApplicationController
 
   # Видалення товару
   def destroy
-    @product.destroy
+    @product.destroy # Видаляємо продукт
+
     respond_to do |format|
-      format.html { redirect_to manage_products_path, notice: 'Товар успішно видалено.' }
-      format.turbo_stream { render turbo_stream: turbo_stream.remove(@product) }
+      format.html { redirect_to request.referer, notice: 'Продукт успішно видалено.' }
+      format.js   # Для AJAX запитів
+      format.turbo_stream { render turbo_stream: turbo_stream.remove(@product) } # Для Turbo
     end
   end
-  
 
-  # Метод для перегляду всіх товарів із можливістю видалення та редагування
+  # Метод для перегляду всіх товарів
   def manage
     @products = Product.all
   end
@@ -59,6 +73,6 @@ class ProductsController < ApplicationController
 
   # Дозволяємо лише ці параметри
   def product_params
-    params.require(:product).permit(:name, :price, :details)
+    params.require(:product).permit(:name, :description, :price)
   end
 end

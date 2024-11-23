@@ -24,7 +24,7 @@ class CartItemsController < ApplicationController
   private
 
   def set_product
-    # Знаходимо продукт по ID, який передається з форми
-    @product = Product.find(params[:cart_item][:product_id])
+    # Знаходимо продукт по ID, який передається без обгортки
+    @product = Product.find(params[:product_id])
   end
 end

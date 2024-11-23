@@ -1,0 +1,42 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <h2 class="text-center">Реєстрація</h2>
+      <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+        <div class="form-group mb-3">
+          <%= f.label :username, "Ім'я користувача", class: "form-label" %>
+          <%= f.text_field :username, class: "form-control", autofocus: true, autocomplete: "username", id: "user_username" %>
+          <div class="invalid-feedback">
+            <%= resource.errors[:username].first if resource.errors[:username].any? %>
+          </div>
+        </div>
+
+        <div class="form-group mb-3">
+          <%= f.label :email, "Електронна пошта", class: "form-label" %>
+          <%= f.email_field :email, class: "form-control", placeholder: "Введіть вашу електронну пошту" %>
+          <div class="invalid-feedback">
+            <%= resource.errors[:email].first if resource.errors[:email].any? %>
+          </div>
+        </div>
+
+        <div class="form-group mb-3">
+          <%= f.label :password, "Пароль", class: "form-label" %>
+          <%= f.password_field :password, class: "form-control", placeholder: "Введіть пароль", autocomplete: "new-password" %>
+        </div>
+
+        <div class="form-group mb-3">
+          <%= f.label :password_confirmation, "Підтвердження пароля", class: "form-label" %>
+          <%= f.password_field :password_confirmation, class: "form-control", placeholder: "Підтвердіть пароль", autocomplete: "new-password" %>
+        </div>
+
+        <div class="d-grid">
+          <%= f.submit "Зареєструватись", class: "btn btn-success" %>
+        </div>
+      <% end %>
+
+      <div class="text-center mt-3">
+        <%= link_to "Уже маєте акаунт? Увійдіть", new_session_path(resource_name), class: "text-decoration-none" %>
+      </div>
+    </div>
+  </div>
+</div>
