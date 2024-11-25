@@ -1,48 +1,203 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Інтернет-магазин ліків</title>
-    <%= csrf_meta_tags %>
-    <%= csp_meta_tag %>
-    <!-- Підключення Bootstrap через CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  </head>
-  <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <div class="container">
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav ms-auto">
-            <% if user_signed_in? %>
-              <li class="nav-item">
-                <%= link_to "Профіль", edit_user_registration_path, class: "nav-link" %>
-              </li>
-              <li class="nav-item">
-            <%= button_to "Вийти", destroy_user_session_path, method: :delete, class: "btn btn-link" %>
-              </li>
-            <% else %>
-              <li class="nav-item">
-                <%= link_to "Вхід", new_user_session_path, class: "nav-link" %>
-              </li>
-              <li class="nav-item">
-                <%= link_to "Реєстрація", new_user_registration_path, class: "nav-link" %>
-              </li>
-            <% end %>
-          </ul>
-        </div>
-      </div>
-    </nav>
-    
-    <div class="container mt-3">
-      <% flash.each do |key, message| %>
-        <div class="alert alert-<%= key == "notice" ? "success" : "danger" %>" role="alert">
-          <%= message %>
-        </div>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Інтернет-магазин ліків</title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+
+  <!-- Підключення Bootstrap через CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <!-- Підключення Font Awesome для іконок -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+
+  <style>
+    /* Пошукова форма */
+    .search-bar {
+      position: relative;
+      width: 350px;
+      display: inline-block;
+    }
+    .search-bar input {
+      width: 100%;
+      padding-right: 50px;
+    }
+    .search-bar button {
+      position: absolute;
+      right: 0;
+      top: 0;
+      height: 100%;
+      border: none;
+      background: #ff7f00;
+      color: white;
+      border-radius: 0 0.375rem 0.375rem 0;
+    }
+    .search-bar button:hover {
+      background: #e06900;
+    }
+
+    /* Стиль для кнопки "Каталог" */
+    .catalog-btn {
+      display: inline-flex;
+      align-items: center;
+      background-color: #007bff;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+      text-decoration: none; /* Без підкреслення */
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+      margin-left: 10px; /* Відступ зліва */
+    }
+
+    .catalog-btn i {
+      margin-right: 0.5rem; /* Відступ між іконкою та текстом */
+      font-size: 20px;
+    }
+
+    .catalog-btn:hover {
+      background-color: #0056b3;
+      text-decoration: none; /* Підтримка без підкреслення на ховері */
+    }
+
+    /* Випадаюче меню для авторизації/реєстрації */
+    .profile-menu {
+      position: relative;
+      display: inline-block;
+    }
+
+    .profile-menu .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #fff;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      z-index: 1;
+      width: 200px;
+      padding: 10px;
+      border-radius: 5px;
+    }
+
+    .profile-menu:hover .dropdown-content {
+      display: block;
+    }
+
+    .auth-text {
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    .btn-primary-custom {
+      background-color: #007bff;
+      color: white;
+      width: 100%;
+    }
+
+    .btn-primary-custom:hover {
+      background-color: #0056b3;
+    }
+
+    .btn-secondary-custom {
+      background-color: #6c757d;
+      color: white;
+      width: 100%;
+    }
+
+    .btn-secondary-custom:hover {
+      background-color: #5a6268;
+    }
+
+    /* Збільшені іконки */
+    .profile-menu i {
+      font-size: 30px;
+      color: #007bff;
+    }
+  </style>
+</head>
+<body>
+  <!-- Навігаційна панель -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+    <div class="container">
+      <%= link_to root_path, class: "navbar-brand" do %>
+        Магазин ліків
       <% end %>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Переключити навігацію">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <!-- Пошукова форма -->
+          <li class="nav-item d-flex align-items-center">
+            <%= form_with(url: products_path, method: :get, class: "search-bar", id: "search-form") do %>
+              <%= text_field_tag :query, params[:query], class: "form-control", placeholder: "Пошук...", id: "search-input" %>
+              <button type="submit" id="search-btn"><i class="fas fa-search"></i></button>
+            <% end %>
+          </li>
+          
+          <!-- Кнопка "Каталог" із іконкою -->
+          <li class="nav-item">
+            <a href="/products" class="catalog-btn">
+              <i class="fas fa-th"></i>
+              Каталог
+            </a>
+          </li>
+          
+          <!-- Кошик -->
+          <li class="nav-item">
+            <%= link_to cart_items_path, class: "nav-link" do %>
+              <i class="fas fa-shopping-cart"></i>
+            <% end %>
+          </li>
+
+          <% if user_signed_in? %>
+            <!-- Іконка профілю для авторизованих користувачів -->
+            <li class="nav-item">
+              <%= link_to edit_user_registration_path, class: "nav-link" do %>
+                <i class="fas fa-user-circle"></i> Профіль
+              <% end %>
+            </li>
+            <!-- Кнопка виходу -->
+            <li class="nav-item">
+              <%= button_to destroy_user_session_path, method: :delete, class: "btn btn-link nav-link" do %>
+                <i class="fas fa-sign-out-alt"></i> Вийти
+              <% end %>
+            </li>
+          <% else %>
+            <!-- Іконка для авторизації/реєстрації -->
+            <li class="nav-item profile-menu">
+              <a href="#" class="nav-link">
+                <i class="fas fa-user-circle"></i>
+              </a>
+              <!-- Випадаюче меню -->
+              <div class="dropdown-content">
+                <div class="auth-text">
+                  Увійдіть або зареєструйтесь, щоб не втратити дані особистого кабінету.
+                </div>
+                <%= link_to 'Увійти', new_user_session_path, class: 'btn btn-sm btn-primary-custom' %>
+                <%= link_to 'Зареєструватися', new_user_registration_path, class: 'btn btn-sm btn-secondary-custom' %>
+              </div>
+            </li>
+          <% end %>
+        </ul>
+      </div>
     </div>
-    
+  </nav>
+
+  <div class="container mt-3">
+    <% flash.each do |key, message| %>
+      <div class="alert alert-<%= key == "notice" ? "success" : "danger" %>" role="alert">
+        <%= message %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="container mt-3">
     <%= yield %>
-  </body>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
 </html>

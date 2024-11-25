@@ -4,8 +4,6 @@ Rails.application.routes.draw do
     registrations: 'users/registrations',
     sessions: 'users/sessions'
   }
-
-  # Обробка видалення облікового запису через Devise
   delete 'users', to: 'users/registrations#destroy'
 
   # Перевірка імені користувача
@@ -14,16 +12,20 @@ Rails.application.routes.draw do
   # Ресурси для товарів
   resources :products, only: [:index, :show, :destroy, :new, :create, :edit, :update] do
     collection do
-      get 'manage' # Маршрут для сторінки управління товарами
+      get 'manage'
+      get 'search'  # Шлях для пошуку
+    end
+    member do
+      post 'add_to_cart'  # Додавання товару в кошик
     end
   end
 
   # Ресурси для кошика
-  resources :cart_items, only: [:create, :index]
+  resources :cart_items, only: [:index, :update, :destroy]
 
-  # Ресурси для замовлень
-  resources :orders
+  # Ресурси для оплати
+  resources :orders, only: [:new, :create, :show]
 
   # Головна сторінка
-  root to: 'home#index'
+  root to: 'home#index'  # Маршрут для головної сторінки
 end

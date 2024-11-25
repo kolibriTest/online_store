@@ -1,31 +1,34 @@
 class ProductsController < ApplicationController
-  before_action :authenticate_user! # Перевірка автентифікації
-  before_action :set_product, only: %i[show edit update destroy]
+  before_action :authenticate_user!, only: [:create, :update, :destroy, :add_to_cart]
+  before_action :check_admin, only: [:manage, :new, :create, :edit, :update, :destroy]
+  before_action :set_product, only: %i[show edit update destroy add_to_cart]
 
-  # Виведення всіх товарів на сторінку
+  # Головна сторінка
+  def home
+    @products = Product.all # Відображення всіх продуктів
+  end
+
+  # Сторінка каталогу товарів
   def index
-    @products = Product.all
+    query = params[:query]
+    @products = query.present? ? Product.where('name LIKE ?', "%#{query}%") : Product.all
   end
 
-  # Показати конкретний товар
-  def show
-  end
+  # Сторінка окремого продукту
+  def show; end
 
-  # Форма для створення нового товару
+  # Створення нового продукту
   def new
     @product = Product.new
   end
 
-  # Створення нового товару
+  # Збереження нового продукту
   def create
     @product = Product.new(product_params)
-
-    # Перевірка на дублювання назви
     if Product.exists?(name: @product.name)
       flash.now[:error] = "Товар з такою назвою вже існує!"
       render :new and return
     end
-
     if @product.save
       redirect_to manage_products_path, notice: 'Товар успішно додано.'
     else
@@ -33,45 +36,60 @@ class ProductsController < ApplicationController
     end
   end
 
-  # Оновлення інформації про товар
+  # Редагування продукту
+  def edit; end
+
+  # Оновлення продукту
   def update
-    # Перевірка на дублювання назви
-    if Product.exists?(name: @product.name) && @product.name != params[:product][:name]
+    if Product.exists?(name: params[:product][:name]) && @product.name != params[:product][:name]
       flash.now[:error] = "Товар з такою назвою вже існує!"
       render :edit and return
     end
-
     if @product.update(product_params)
-      redirect_to manage_products_path, notice: 'Товар успішно оновлений.'
+      redirect_to manage_products_path, notice: 'Товар успішно оновлено.'
     else
       render :edit
     end
   end
 
-  # Видалення товару
+  # Видалення продукту
   def destroy
-    @product.destroy # Видаляємо продукт
+    @product.destroy
+    redirect_to manage_products_path, notice: 'Продукт успішно видалено.'
+  end
 
-    respond_to do |format|
-      format.html { redirect_to request.referer, notice: 'Продукт успішно видалено.' }
-      format.js   # Для AJAX запитів
-      format.turbo_stream { render turbo_stream: turbo_stream.remove(@product) } # Для Turbo
+  # Додавання товару до кошика
+  def add_to_cart
+    quantity = params[:quantity].to_i
+    @cart_item = current_user.cart_items.find_or_initialize_by(product: @product)
+    @cart_item.quantity ||= 0
+    @cart_item.quantity += quantity
+    @cart_item.quantity = 10 if @cart_item.quantity > 10
+
+    if @cart_item.save
+      redirect_to cart_items_path, notice: "Товар додано в кошик."
+    else
+      redirect_to product_path(@product), alert: "Не вдалося додати товар в кошик."
     end
   end
 
-  # Метод для перегляду всіх товарів
+  # Сторінка управління товарами
   def manage
     @products = Product.all
   end
 
   private
 
-  # Встановлюємо товар для show, edit, update, destroy
+  def check_admin
+    unless current_user&.email == 'administrator@gmail.com'
+      redirect_to root_path, alert: 'Тільки адміністратори можуть управляти товарами.'
+    end
+  end
+
   def set_product
     @product = Product.find(params[:id])
   end
 
-  # Дозволяємо лише ці параметри
   def product_params
     params.require(:product).permit(:name, :description, :price)
   end

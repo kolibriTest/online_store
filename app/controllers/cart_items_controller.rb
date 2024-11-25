@@ -1,30 +1,52 @@
 class CartItemsController < ApplicationController
-  before_action :set_product, only: [:create]
+  before_action :authenticate_user!
 
-  def create
-    # Якщо кошик уже існує для поточного користувача, знаходимо або створюємо новий запис
-    @cart_item = current_user.cart_items.find_or_initialize_by(product: @product)
-
-    # Оновлюємо кількість товару в кошику, додаючи нову кількість до поточної
-    @cart_item.quantity += params[:cart_item][:quantity].to_i
-
-    # Зберігаємо зміни
-    if @cart_item.save
-      redirect_to cart_items_path, notice: 'Товар додано до кошика.'
-    else
-      redirect_to products_path, alert: 'Не вдалося додати товар до кошика.'
-    end
-  end
-
+  # Показуємо всі товари в кошику
   def index
-    # Виводимо всі товари в кошику для поточного користувача
-    @cart_items = current_user.cart_items
+    @cart_items = current_user.cart_items.includes(:product)
   end
 
-  private
+  # Оновлення кількості товару в кошику
+  def update
+    @cart_item = current_user.cart_items.find(params[:id])
 
-  def set_product
-    # Знаходимо продукт по ID, який передається без обгортки
-    @product = Product.find(params[:product_id])
+    # Перевірка: чи кількість товару не перевищує 10
+    if params[:cart_item][:quantity].to_i <= 10 && params[:cart_item][:quantity].to_i >= 1
+      @cart_item.update(quantity: params[:cart_item][:quantity])
+      flash[:notice] = "Кількість товару оновлено!"
+    else
+      flash[:alert] = "Максимальна кількість товару — 10 упаковок!"
+    end
+
+    redirect_to cart_items_path
+  end
+
+  # Видалення товару з кошика
+  def destroy
+    @cart_item = current_user.cart_items.find(params[:id])
+    @cart_item.destroy
+    flash[:notice] = "Товар видалено з кошика!"
+    redirect_to cart_items_path
+  end
+
+  # Додавання товару в кошик
+  def add_to_cart
+    @product = Product.find(params[:id])
+    quantity = params[:quantity].to_i
+
+    # Перевірка: чи кількість товару не перевищує 10
+    quantity = 10 if quantity > 10 # Максимум 10 одиниць
+
+    # Перевіряємо чи товар вже є в кошику
+    cart_item = current_user.cart_items.find_by(product_id: @product.id)
+
+    if cart_item
+      cart_item.update(quantity: cart_item.quantity + quantity)
+    else
+      current_user.cart_items.create(product: @product, quantity: quantity)
+    end
+
+    flash[:notice] = "Товар додано до кошика!"
+    redirect_to cart_items_path
   end
 end

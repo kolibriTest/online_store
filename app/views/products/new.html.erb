@@ -5,27 +5,10 @@
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Підключення Font Awesome для іконок -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
   </head>
   <body>
-    <header class="mb-4">
-      <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
-        <div class="container">
-          <a class="navbar-brand" href="#"><strong>Магазин ліків</strong></a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Переключити навігацію">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
-              <li class="nav-item"><%= link_to "Головна", root_path, class: "nav-link" %></li>
-              <li class="nav-item"><%= link_to "Кошик", cart_items_path, class: "nav-link" %></li>
-              <li class="nav-item"><%= link_to "Товари", products_path, class: "nav-link" %></li> <!-- Кнопка "Товари" -->
-              <li class="nav-item"><%= link_to "Управління товарами", manage_products_path, class: "nav-link" %></li> <!-- Кнопка для управління товарами -->
-            </ul>
-          </div>
-        </div>
-      </nav>
-    </header>
-
     <main class="container">
       <h1 class="text-center mb-5 text-primary">Додати новий товар</h1>
 
@@ -45,24 +28,47 @@
 
             <div class="mb-3">
               <%= form.label :name, 'Назва товару', class: 'form-label' %>
-              <%= form.text_field :name, class: 'form-control' %>
+              <%= form.text_field :name, class: 'form-control', required: true %>
             </div>
 
             <div class="mb-3">
               <%= form.label :price, 'Ціна', class: 'form-label' %>
-              <%= form.number_field :price, class: 'form-control' %>
+              <%= form.number_field :price, class: 'form-control', step: "0.01", required: true %>
             </div>
 
-            <!-- Видалено блок опису товару -->
+            <!-- Сховати стандартну кнопку форми -->
+            <%= form.submit 'Додати товар', class: 'btn btn-success', style: 'display: none;' %>
             
-            <div class="text-center">
-              <%= form.submit 'Додати товар', class: 'btn btn-success' %>
-            </div>
+            <!-- Кнопка для відкриття модального вікна -->
+            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#confirmModal">
+              Додати товар
+            </button>
           <% end %>
         </div>
       </div>
+
+      <!-- Модальне вікно підтвердження -->
+      <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="confirmModalLabel">Підтвердження</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              Ви дійсно хочете додати цей товар до списку?
+            </div>
+            <div class="modal-footer">
+              <%= button_to 'Підтвердити', @product, method: :post, class: 'btn btn-success' %>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрити</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </main>
 
+    <!-- Підключення Bootstrap JavaScript для спливаючих елементів -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>

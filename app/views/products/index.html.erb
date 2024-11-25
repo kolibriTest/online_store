@@ -1,60 +1,82 @@
 <!DOCTYPE html>
-<html>
+<html lang="uk">
   <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Інтернет-магазин ліків</title>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+    <style>
+      body {
+        padding: 0;
+        margin: 0;
+      }
+
+      .catalog {
+        margin-left: 0;
+        text-align: left;
+      }
+
+      .catalog-title {
+        font-size: 1.5rem;
+        color: #0d6efd;
+        margin-bottom: 20px;
+      }
+
+      .manage-button {
+        margin-bottom: 20px;
+      }
+    </style>
   </head>
   <body>
-    <header class="mb-4">
-      <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
-        <div class="container">
-          <a class="navbar-brand" href="#"><strong>Магазин ліків</strong></a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Переключити навігацію">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
-              <li class="nav-item"><%= link_to "Головна", root_path, class: "nav-link" %></li>
-              <li class="nav-item"><%= link_to "Кошик", cart_items_path, class: "nav-link" %></li>
-              <li class="nav-item"><%= link_to "Управління товарами", manage_products_path, class: "nav-link" %></li> <!-- Кнопка для управління товарами -->
-            </ul>
-          </div>
-        </div>
-      </nav>
-    </header>
+    <main class="container catalog">
+      <section class="catalog-section" data-aos="fade-up">
+        <h1 class="catalog-title">Каталог товарів</h1>
 
-    <main class="container">
-      <!-- Каталог товарів -->
-      <h1 class="text-center mb-5 text-primary">Каталог товарів</h1>
-      <div class="row g-4">
-        <% @products.each do |product| %>
-          <div class="col-md-4">
-            <div class="card h-100 shadow-sm">
-              <div class="card-body d-flex flex-column justify-content-between">
-                <h5 class="card-title text-primary"><%= product.name %></h5>
-                <p class="card-text"><strong>Ціна:</strong> <%= product.price %> грн</p>
-                <p class="text-muted"><%= product.details %></p>
-
-                <!-- Форма для додавання товару в кошик -->
-                <%= form_with url: cart_items_path, method: :post do |f| %>
-                  <%= f.hidden_field :product_id, value: product.id %>
-                  <div class="mb-3">
-                    <%= f.label :quantity, 'Кількість', class: "form-label" %>
-                    <%= f.number_field :quantity, min: 1, max: 9, value: 1, class: 'form-control' %>
-                  </div>
-                  <%= f.submit 'Додати в кошик', class: 'btn btn-success' %>
-                <% end %>
-
-                <%= link_to 'Деталі', product_path(product), class: 'btn btn-link mt-2' %>
-              </div>
-            </div>
+        <!-- Блок управління для адміністратора -->
+        <% if current_user&.email == 'administrator@gmail.com' %>
+          <div class="manage-button">
+            <%= link_to "Управління товарами", manage_products_path, class: "btn btn-primary btn-lg" %>
           </div>
         <% end %>
-      </div>
+
+        <div class="row g-4">
+          <% @products.each do |product| %>
+            <div class="col-md-4" data-aos="zoom-in">
+              <div class="card h-100 shadow-sm">
+                <img src="<%= product.image_url %>" class="card-img-top" alt="<%= product.name %>">
+                <div class="card-body d-flex flex-column justify-content-between">
+                  <h5 class="card-title text-primary"><%= product.name %></h5>
+                  <p class="card-text"><strong>Ціна:</strong> <%= product.price %> грн</p>
+                  <p class="text-muted"><%= product.description %></p>
+
+                  <%= form_with url: add_to_cart_product_path(product), method: :post, local: true do |f| %>
+                    <div class="input-group mb-3">
+                      <%= f.number_field :quantity, value: 1, min: 1, max: 10, class: "form-control" %>
+                      <div class="input-group-append">
+                        <button class="btn btn-success" type="submit">
+                          <i class="fas fa-cart-plus"></i> Додати в кошик
+                        </button>
+                      </div>
+                    </div>
+                  <% end %>
+
+                  <%= link_to 'Деталі', product_path(product), class: 'btn btn-link mt-2' %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </section>
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script>
+      AOS.init();
+    </script>
   </body>
 </html>

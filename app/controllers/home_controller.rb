@@ -1,5 +1,10 @@
 class HomeController < ApplicationController
   def index
-    @products = Product.all.limit(5)  # Обмежуємо кількість товарів для відображення
+    # Пошук товарів за запитом
+    if params[:query].present?
+      @products = Product.where('name LIKE ?', "%#{params[:query]}%")
+    else
+      @products = []  # Якщо немає запиту, не показуємо продукти
+    end
   end
 end

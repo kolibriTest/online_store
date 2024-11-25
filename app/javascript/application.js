@@ -35,7 +35,6 @@ document.addEventListener("DOMContentLoaded", function () {
             usernameField.classList.remove("is-invalid");
 
             // Якщо ім'я користувача доступне, видаляємо продукт через AJAX
-            // Приклад видалення продукту через AJAX-запит
             const productId = document.getElementById('product-id').value; // Отримуємо ID продукту (вкажіть відповідний ID)
             
             fetch(`/products/${productId}`, {
