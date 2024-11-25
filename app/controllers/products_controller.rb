@@ -5,7 +5,7 @@ class ProductsController < ApplicationController
 
   # Головна сторінка
   def home
-    @products = Product.all # Відображення всіх продуктів
+    @products = Product.all
   end
 
   # Сторінка каталогу товарів
@@ -54,8 +54,16 @@ class ProductsController < ApplicationController
 
   # Видалення продукту
   def destroy
-    @product.destroy
-    redirect_to manage_products_path, notice: 'Продукт успішно видалено.'
+    # Видаляємо пов'язані записи перед видаленням продукту
+    if defined?(Cart)
+      Cart.where(product_id: @product.id).destroy_all
+    end
+
+    if @product.destroy
+      redirect_to manage_products_path, notice: 'Продукт успішно видалено.'
+    else
+      redirect_to manage_products_path, alert: 'Не вдалося видалити продукт.'
+    end
   end
 
   # Додавання товару до кошика
@@ -91,6 +99,6 @@ class ProductsController < ApplicationController
   end
 
   def product_params
-    params.require(:product).permit(:name, :description, :price)
+    params.require(:product).permit(:name, :description, :price, :image)
   end
 end
