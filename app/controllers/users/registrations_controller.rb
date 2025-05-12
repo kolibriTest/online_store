@@ -5,14 +5,14 @@ class Users::RegistrationsController < Devise::RegistrationsController
     if params[:user][:password].present? || params[:user][:password_confirmation].present?
       if current_user.update_with_password(user_params_with_password)
         bypass_sign_in(current_user)
-        redirect_to edit_user_registration_path, notice: 'Профіль успішно оновлено.'
+        redirect_to edit_user_registration_path, notice: "Профіль успішно оновлено."
       else
         render :edit
       end
     else
       # Якщо пароль не змінюється, оновлюємо інші поля
       if current_user.update(user_params)
-        redirect_to edit_user_registration_path, notice: 'Профіль успішно оновлено.'
+        redirect_to edit_user_registration_path, notice: "Профіль успішно оновлено."
       else
         render :edit
       end

@@ -17,7 +17,7 @@ class UsersController < ApplicationController
   def update
     @user = current_user  # Отримати поточного користувача
     if @user.update(user_params)  # Оновити профіль
-      redirect_to user_path(@user), notice: 'Профіль оновлено успішно!'
+      redirect_to user_path(@user), notice: "Профіль оновлено успішно!"
     else
       render :edit  # Якщо не вдалося оновити профіль, показати форму редагування
     end

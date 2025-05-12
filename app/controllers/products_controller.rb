@@ -1,6 +1,6 @@
 class ProductsController < ApplicationController
-  before_action :authenticate_user!, only: [:create, :update, :destroy, :add_to_cart]
-  before_action :check_admin, only: [:manage, :new, :create, :edit, :update, :destroy]
+  before_action :authenticate_user!, only: [ :create, :update, :destroy, :add_to_cart ]
+  before_action :check_admin, only: [ :manage, :new, :create, :edit, :update, :destroy ]
   before_action :set_product, only: %i[show edit update destroy add_to_cart]
 
   # Головна сторінка
@@ -11,7 +11,7 @@ class ProductsController < ApplicationController
   # Сторінка каталогу товарів
   def index
     query = params[:query]
-    @products = query.present? ? Product.where('name LIKE ?', "%#{query}%") : Product.all
+    @products = query.present? ? Product.where("name LIKE ?", "%#{query}%") : Product.all
   end
 
   # Сторінка окремого продукту
@@ -30,7 +30,7 @@ class ProductsController < ApplicationController
       render :new and return
     end
     if @product.save
-      redirect_to manage_products_path, notice: 'Товар успішно додано.'
+      redirect_to manage_products_path, notice: "Товар успішно додано."
     else
       render :new
     end
@@ -46,7 +46,7 @@ class ProductsController < ApplicationController
       render :edit and return
     end
     if @product.update(product_params)
-      redirect_to manage_products_path, notice: 'Товар успішно оновлено.'
+      redirect_to manage_products_path, notice: "Товар успішно оновлено."
     else
       render :edit
     end
@@ -60,9 +60,9 @@ class ProductsController < ApplicationController
     end
 
     if @product.destroy
-      redirect_to manage_products_path, notice: 'Продукт успішно видалено.'
+      redirect_to manage_products_path, notice: "Продукт успішно видалено."
     else
-      redirect_to manage_products_path, alert: 'Не вдалося видалити продукт.'
+      redirect_to manage_products_path, alert: "Не вдалося видалити продукт."
     end
   end
 
@@ -89,8 +89,8 @@ class ProductsController < ApplicationController
   private
 
   def check_admin
-    unless current_user&.email == 'administrator@gmail.com'
-      redirect_to root_path, alert: 'Тільки адміністратори можуть управляти товарами.'
+    unless current_user&.email == "administrator@gmail.com"
+      redirect_to root_path, alert: "Тільки адміністратори можуть управляти товарами."
     end
   end
 
